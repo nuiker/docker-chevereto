@@ -1,5 +1,5 @@
-FROM php:7.1.3-apache
-MAINTAINER "Manh Tan Nguyen <tan.mng90@gmail.com>"
+FROM php:7.2-apache
+MAINTAINER "nuiker <nuiker@gmail.com>"
 
 ENV CHEVERETO_APACHE_RUN_USER www-data
 
@@ -26,25 +26,15 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 # Enable mod_rewrite for Chevereto
 RUN a2enmod rewrite
 
-# Set all required labels, we set it here to make sure the file is as reusable as possible
-LABEL org.label-schema.url="https://github.com/tanmng/docker-chevereto" \
-      org.label-schema.name="Chevereto Free" \
-      org.label-schema.license="Apache-2.0" \
-      org.label-schema.version="Latest installer" \
-      org.label-schema.vcs-url="https://github.com/tanmng/docker-chevereto" \
-      org.label-schema.schema-version="1.0" \
-      com.puppet.dockerfile="/Dockerfile"
-
 # Download installer script
 WORKDIR /var/www/html
 USER ${CHEVERETO_APACHE_RUN_USER}
-RUN curl -O https://cdn.rawgit.com/Chevereto/php-repo-installer/master/index.php \
-    && chmod +x index.php
+RUN curl -o index.php https://chevereto.com/download/file/installer && chmod 777 index.php
 
 COPY settings.php app/settings.php
 
 # Expose the image directory
-VOLUME /var/www/html/images
+VOLUME /var/www/html/
 
 # Change back to root user for normal Service start up
 USER root
